@@ -54,6 +54,9 @@ public class CouponEntity {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
+    @Column(nullable = true)
+    private LocalDateTime deletedAt;
+
     public CouponEntity() {
     }
 
@@ -68,6 +71,7 @@ public class CouponEntity {
         this.redeemed = coupon.getRedeemed();
         this.createdAt = coupon.getCreatedAt();
         this.updatedAt = coupon.getUpdatedAt();
+        this.deletedAt = coupon.getDeletedAt();
     }
 
     public Coupon toDomain() {
@@ -82,6 +86,7 @@ public class CouponEntity {
         coupon.setRedeemed(this.redeemed);
         coupon.setCreatedAt(this.createdAt);
         coupon.setUpdatedAt(this.updatedAt);
+        coupon.setDeletedAt(this.deletedAt);
         return coupon;
     }
 

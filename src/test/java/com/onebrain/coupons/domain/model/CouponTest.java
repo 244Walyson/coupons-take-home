@@ -166,6 +166,7 @@ class CouponTest {
 
         // Then
         assertEquals(CouponStatus.DELETED, coupon.getStatus());
+        assertNotNull(coupon.getDeletedAt());
     }
 
     @Test

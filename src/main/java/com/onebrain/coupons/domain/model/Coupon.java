@@ -20,6 +20,7 @@ public class Coupon {
     private Boolean redeemed = false;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private LocalDateTime deletedAt;
 
     public Coupon() {
         this.id = UUID.randomUUID();
@@ -43,7 +44,6 @@ public class Coupon {
         if (code == null)
             return null;
 
-        // Remove caracteres especiais e mantém apenas alfanuméricos
         String sanitized = code.replaceAll("[^a-zA-Z0-9]", "");
 
         return sanitized.toUpperCase();
@@ -86,13 +86,13 @@ public class Coupon {
         }
         this.status = CouponStatus.DELETED;
         this.updatedAt = LocalDateTime.now();
+        this.deletedAt = LocalDateTime.now();
     }
 
     public void updateTimestamp() {
         this.updatedAt = LocalDateTime.now();
     }
 
-    // Getters and Setters
     public UUID getId() {
         return id;
     }
@@ -171,5 +171,13 @@ public class Coupon {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public LocalDateTime getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(LocalDateTime deletedAt) {
+        this.deletedAt = deletedAt;
     }
 }
