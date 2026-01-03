@@ -1,20 +1,3 @@
-> ## 💭 Nota sobre Arquitetura
->
-> Este projeto foi desenvolvido com Clean Architecture para demonstrar:
-> - Capacidade de trabalhar com padrões avançados
-> - Código altamente testável e manutenível
-> - Separação clara de responsabilidades
->
-> **Reconheço que para o escopo específico deste desafio, uma arquitetura
-> em 3 camadas (Controller → Service → Repository) seria suficiente.**
->
-> A escolha foi intencional para mostrar versatilidade técnica, mas em
-> contextos reais, eu avaliaria:
-> - Tamanho e complexidade do projeto
-> - Tamanho da equipe
-> - Horizonte de manutenção
-> - Trade-offs de tempo vs qualidade
-
 # 🎫 Coupons Service
 
 API RESTful para gerenciamento de cupons de desconto, desenvolvida como desafio técnico seguindo boas práticas de arquitetura e testes.
@@ -25,54 +8,52 @@ Este projeto implementa uma API completa de cupons com operações de criação,
 
 ## 🏗 Arquitetura
 
-O projeto adota uma arquitetura em camadas baseada em **Clean Architecture**, priorizando:
-- Separação clara de responsabilidades
-- Testabilidade
-- Manutenibilidade
-- Independência de frameworks
+O projeto adota uma **Arquitetura em Camadas (Layered Architecture)** seguindo o padrão clássico MVC do Spring Boot, priorizando:
+- Simplicidade e pragmatismo
+- Redução de boilerplate
+- Clareza e facilidade de navegação
+- Alinhamento com os padrões da comunidade Spring
 
 ### Estrutura de Camadas
 
 ```
 src/main/java/com/onebrain/coupons/
-├── domain/              # Regras de negócio e entidades
-│   ├── model/          # Entidades do domínio
-│   ├── interfaces/     # Contratos (portas)
-│   ├── exceptions/     # Exceções de negócio
-│   └── enums/         # Enumerações
-├── application/        # Casos de uso
-│   └── usecases/      # Lógica de aplicação
-└── infra/             # Detalhes de implementação
-    ├── controllers/   # API REST
-    ├── repositories/  # Implementação de persistência
-    ├── persistence/   # Entidades JPA
-    └── config/        # Configurações
+├── controller/         # Camada REST (Entrada)
+├── dto/           # Objetos de Transferência de Dados
+├── service/            # Regras de Negócio
+├── repository/         # Acesso a Dados
+├── entity/             # Entidades JPA (Domínio + Persistência)
+├── exception/          # Tratamento de Erros Global
+├── config/             # Configurações do Spring
+└── enums/              # Enumerações
 ```
 
 ### Camadas Explicadas
 
-**Domain**: Contém as regras de negócio puras, sem dependências de frameworks. A entidade `Coupon` encapsula todas as validações necessárias (código alfanumérico, valor mínimo, data de expiração).
+**Controller**: Ponto de entrada da aplicação. Recebe as requisições HTTP, valida os DTOs de entrada e delega o processamento para o Service. Retorna as respostas HTTP apropriadas.
 
-**Application**: Implementa os casos de uso (`CreateCouponUseCase`, `GetCouponByIdUseCase`, `DeleteCouponUseCase`), orquestrando as operações entre o domínio e a infraestrutura.
+**Service**: Contém toda a lógica de negócio (Business Logic). É responsável pelas validações de domínio, cálculos e orquestração das chamadas ao Repository.
 
-**Infrastructure**: Camada de adaptadores que integra com frameworks externos (Spring Boot, JPA, validações, etc.).
+**Repository**: Interface que estende `JpaRepository`, responsável pela comunicação com o banco de dados.
+
+**Entity**: Representa a tabela no banco de dados e contém o estado a ser persistido. Nesta abordagem simplificada, a entidade JPA também atua como objeto de domínio.
 
 ## 🎯 Decisões Técnicas
 
-### Por que Clean Architecture?
+### Por que Simplificar para MVC Padrão?
 
-Embora reconheça que uma arquitetura mais simples seria suficiente para o escopo do desafio, optei por demonstrar conhecimento de padrões arquiteturais avançados. Os principais benefícios incluem:
+Para este desafio específico, a arquitetura anterior (Clean Architecture) introduzia complexidade acidental. A migração para um modelo MVC simplificado trouxe:
 
-- **Testabilidade**: Regras de negócio podem ser testadas sem dependências externas
-- **Flexibilidade**: Mudanças em frameworks ou banco de dados não afetam o núcleo do sistema
-- **Organização**: Estrutura clara facilita navegação e manutenção do código
+- **Menos código**: Remoção de mapeadores e classes duplicadas (Modelo de Domínio vs Entidade JPA).
+- **Maior produtividade**: Uso direto de recursos do Spring Data e Validation.
+- **Curva de aprendizado menor**: Padrão amplamente conhecido por desenvolvedores java/Spring.
 
 ### Trade-offs Considerados
 
-- ✅ Maior cobertura de testes e qualidade de código
-- ✅ Código mais expressivo e autodocumentado
-- ⚠️ Mais arquivos e camadas para navegar
-- ⚠️ Curva de aprendizado inicial maior
+- ✅ Desenvolvimento mais rápido e direto
+- ✅ Menos arquivos para manter
+- ✅ Estrutura familiar para a maioria dos devs Spring
+- ⚠️ Acoplamento entre domínio e infraestrutura (anotações JPA na entidade)
 
 ## 🚀 Tecnologias
 
@@ -153,9 +134,9 @@ Após iniciar a aplicação, acesse:
 
 ### Endpoints Principais
 
-- `POST /api/coupons` - Criar cupom
-- `GET /api/coupons/{id}` - Buscar cupom por ID
-- `DELETE /api/coupons/{id}` - Excluir cupom (soft delete)
+- `POST /coupon` - Criar cupom
+- `GET /coupon/{id}` - Buscar cupom por ID
+- `DELETE /coupon/{id}` - Excluir cupom (soft delete)
 
 ## 📝 Regras de Negócio Implementadas
 
@@ -175,11 +156,11 @@ Após iniciar a aplicação, acesse:
 
 Se tivesse mais tempo, implementaria:
 
-- Cache com Redis para consultas frequentes
-- Paginação nos endpoints de listagem
-- Eventos de domínio para auditoria
 - Metrics com Micrometer/Prometheus
+- Eventos de domínio para auditoria
 - Rate limiting por API key
+- Cache com Redis para consultas frequentes
+- Implementação de endpoint de listagem com paginação
 
 ## 📞 Contato
 
