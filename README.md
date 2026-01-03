@@ -8,12 +8,14 @@
 > **Reconheço que para o escopo específico deste desafio, uma arquitetura
 > em 3 camadas (Controller → Service → Repository) seria suficiente.**
 >
-> A escolha foi intencional para mostrar versatilidade técnica, mas em
-> contextos reais, eu avaliaria:
+> A escolha pela Clean Architecture foi intencional, visando evidenciar versatilidade técnica.
+> Em cenários reais, a decisão arquitetural consideraria fatores como:
 > - Tamanho e complexidade do projeto
 > - Tamanho da equipe
 > - Horizonte de manutenção
 > - Trade-offs de tempo vs qualidade
+>
+> ## Uma versão simplificada utilizando MVC padrão pode ser encontrada [neste branch](https://github.com/244Walyson/coupons-take-home/tree/main-mvc)
 
 # 🎫 Coupons Service
 
@@ -154,9 +156,9 @@ Após iniciar a aplicação, acesse:
 
 ### Endpoints Principais
 
-- `POST /api/coupons` - Criar cupom
-- `GET /api/coupons/{id}` - Buscar cupom por ID
-- `DELETE /api/coupons/{id}` - Excluir cupom (soft delete)
+- `POST /coupons` - Criar cupom
+- `GET /coupons/{id}` - Buscar cupom por ID
+- `DELETE /coupons/{id}` - Excluir cupom (soft delete)
 
 ## 📝 Regras de Negócio Implementadas
 
@@ -176,11 +178,11 @@ Após iniciar a aplicação, acesse:
 
 Se tivesse mais tempo, implementaria:
 
-- Cache com Redis para consultas frequentes
-- Paginação nos endpoints de listagem
-- Eventos de domínio para auditoria
 - Metrics com Micrometer/Prometheus
+- Eventos de domínio para auditoria
 - Rate limiting por API key
+- Cache com Redis para consultas frequentes
+- Implementação de endpoint de listagem com paginação
 
 ## 📞 Contato
 
