@@ -131,6 +131,17 @@ newman run coupon-api-tests.json \
 - Java 25+
 - Maven 3.8+
 - Docker (opcional)
+- Git
+
+### 1. Clonar o Repositório
+
+```bash
+# Clone o projeto
+git clone https://github.com/244Walyson/coupons-take-home.git
+
+# Entre no diretório
+cd coupons-take-home
+```
 
 ### Execução Local
 
