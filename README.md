@@ -67,6 +67,7 @@ Embora reconheça que uma arquitetura mais simples seria suficiente para o escop
 - **Flexibilidade**: Mudanças em frameworks ou banco de dados não afetam o núcleo do sistema
 - **Organização**: Estrutura clara facilita navegação e manutenção do código
 
+
 ### Trade-offs Considerados
 
 - ✅ Maior cobertura de testes e qualidade de código
@@ -186,5 +187,11 @@ Se tivesse mais tempo, implementaria:
 Projeto desenvolvido como desafio técnico por [Walyson Moises](https://linkedin.com/in/walysonmoises)
 
 ---
-
 **Nota**: Este projeto prioriza qualidade de código, testes e arquitetura sobre entrega rápida, demonstrando capacidade de trabalhar em projetos de médio/longo prazo com equipes maiores.
+
+
+### Visão Geral do Sistema
+
+<img width="1103" height="534" alt="image" src="https://github.com/user-attachments/assets/6acf78f0-6415-4e51-8746-9217c4a003f8" />
+<img width="1104" height="441" alt="image" src="https://github.com/user-attachments/assets/f461b0eb-cdd3-4424-9a6b-e5432099649c" />
+
