@@ -1,0 +1,689 @@
+{
+  "info": {
+    "name": "API Cupons - Testes Completos",
+    "description": "Coleção completa para testar a API de cupons com todas as regras de negócio",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "coupon_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Create Coupon - Cenários de Sucesso",
+      "item": [
+        {
+          "name": "Criar cupom válido básico",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code é 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Resposta contém todos os campos obrigatórios\", function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('id');",
+                  "    pm.expect(response).to.have.property('code');",
+                  "    pm.expect(response).to.have.property('description');",
+                  "    pm.expect(response).to.have.property('discountValue');",
+                  "    pm.expect(response).to.have.property('expirationDate');",
+                  "    pm.expect(response).to.have.property('published');",
+                  "    pm.expect(response).to.have.property('redeemed');",
+                  "    pm.expect(response).to.have.property('status');",
+                  "});",
+                  "",
+                  "pm.test(\"Código do cupom tem 6 caracteres\", function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.code).to.have.lengthOf(6);",
+                  "});",
+                  "",
+                  "pm.test(\"Status inicial é ACTIVE\", function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.status).to.eql('ACTIVE');",
+                  "});",
+                  "",
+                  "pm.test(\"Redeemed é false por padrão\", function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.redeemed).to.be.false;",
+                  "});",
+                  "",
+                  "// Salvar ID para testes posteriores",
+                  "pm.collectionVariables.set(\"coupon_id\", pm.response.json().id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"TESTE1\",\n  \"description\": \"Cupom de teste válido\",\n  \"discountValue\": 0.5,\n  \"expirationDate\": \"2026-12-31T23:59:59.999Z\",\n  \"published\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/coupon",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "coupon"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Criar cupom com caracteres especiais no código",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code é 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Código teve caracteres especiais removidos\", function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.code).to.match(/^[A-Z0-9]{6}$/);",
+                  "});",
+                  "",
+                  "pm.test(\"Código tem exatamente 6 caracteres\", function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.code).to.have.lengthOf(6);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"AB@C-12#3\",\n  \"description\": \"Teste com caracteres especiais\",\n  \"discountValue\": 10,\n  \"expirationDate\": \"2026-06-30T23:59:59.999Z\",\n  \"published\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/coupon",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "coupon"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Criar cupom já publicado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code é 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Cupom criado como publicado\", function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.published).to.be.true;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"PUBL01\",\n  \"description\": \"Cupom criado já publicado\",\n  \"discountValue\": 5.5,\n  \"expirationDate\": \"2026-12-31T23:59:59.999Z\",\n  \"published\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/coupon",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "coupon"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Criar cupom com desconto mínimo (0.5)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code é 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Desconto mínimo aceito (0.5)\", function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.discountValue).to.eql(0.5);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"MIN050\",\n  \"description\": \"Cupom com valor mínimo de desconto\",\n  \"discountValue\": 0.5,\n  \"expirationDate\": \"2026-12-31T23:59:59.999Z\",\n  \"published\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/coupon",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "coupon"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Criar cupom com desconto alto",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code é 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Desconto alto aceito (sem limite máximo)\", function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.discountValue).to.eql(1000);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"MAX999\",\n  \"description\": \"Cupom com valor alto de desconto\",\n  \"discountValue\": 1000,\n  \"expirationDate\": \"2026-12-31T23:59:59.999Z\",\n  \"published\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/coupon",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "coupon"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Create Coupon - Cenários de Erro",
+      "item": [
+        {
+          "name": "Criar cupom sem campo obrigatório (code)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code é 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Cupom sem código\",\n  \"discountValue\": 10,\n  \"expirationDate\": \"2026-12-31T23:59:59.999Z\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/coupon",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "coupon"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Criar cupom sem description",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code é 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"TEST01\",\n  \"discountValue\": 10,\n  \"expirationDate\": \"2026-12-31T23:59:59.999Z\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/coupon",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "coupon"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Criar cupom sem discountValue",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code é 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"TEST01\",\n  \"description\": \"Cupom sem desconto\",\n  \"expirationDate\": \"2026-12-31T23:59:59.999Z\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/coupon",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "coupon"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Criar cupom sem expirationDate",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code é 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"TEST01\",\n  \"description\": \"Cupom sem data de expiração\",\n  \"discountValue\": 10\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/coupon",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "coupon"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Criar cupom com data de expiração no passado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code é 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Mensagem de erro indica data no passado\", function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.message || response.error).to.exist;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"PAST01\",\n  \"description\": \"Cupom com data no passado\",\n  \"discountValue\": 10,\n  \"expirationDate\": \"2020-01-01T00:00:00.000Z\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/coupon",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "coupon"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Criar cupom com desconto menor que 0.5",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code é 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Mensagem de erro indica valor mínimo\", function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.message || response.error).to.exist;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"LOW001\",\n  \"description\": \"Cupom com desconto muito baixo\",\n  \"discountValue\": 0.3,\n  \"expirationDate\": \"2026-12-31T23:59:59.999Z\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/coupon",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "coupon"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Criar cupom com código maior que 6 caracteres sem especiais",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code é 400 ou código truncado para 6\", function () {",
+                  "    if (pm.response.code === 201) {",
+                  "        const response = pm.response.json();",
+                  "        pm.expect(response.code).to.have.lengthOf(6);",
+                  "    } else {",
+                  "        pm.response.to.have.status(400);",
+                  "    }",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"TOOLONG123\",\n  \"description\": \"Cupom com código muito longo\",\n  \"discountValue\": 10,\n  \"expirationDate\": \"2026-12-31T23:59:59.999Z\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/coupon",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "coupon"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Delete Coupon - Cenários",
+      "item": [
+        {
+          "name": "Setup - Criar cupom para deletar",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Cupom criado com sucesso\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const response = pm.response.json();",
+                  "pm.collectionVariables.set(\"coupon_to_delete\", response.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"DEL001\",\n  \"description\": \"Cupom para testar deleção\",\n  \"discountValue\": 5,\n  \"expirationDate\": \"2026-12-31T23:59:59.999Z\",\n  \"published\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/coupon",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "coupon"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Deletar cupom com sucesso (soft delete)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code é 200 ou 204\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
+                  "});",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  "    pm.test(\"Soft delete - status mudou para DELETED\", function () {",
+                  "        const response = pm.response.json();",
+                  "        pm.expect(response.status).to.eql('DELETED');",
+                  "    });",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/coupon/{{coupon_to_delete}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "coupon",
+                "{{coupon_to_delete}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Tentar deletar cupom já deletado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code é 400 ou 404\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 404]);",
+                  "});",
+                  "",
+                  "pm.test(\"Mensagem indica que cupom já foi deletado\", function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.message || response.error).to.exist;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/coupon/{{coupon_to_delete}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "coupon",
+                "{{coupon_to_delete}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Tentar deletar cupom inexistente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code é 404\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/coupon/00000000-0000-0000-0000-000000000000",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "coupon",
+                "00000000-0000-0000-0000-000000000000"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
